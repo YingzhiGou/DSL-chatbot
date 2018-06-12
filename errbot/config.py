@@ -285,21 +285,31 @@ BOT_ALT_PREFIX_CASEINSENSITIVE = True
 # Example:
 #
 #ACCESS_CONTROLS_DEFAULT = {} # Allow everyone access by default
-#ACCESS_CONTROLS = {'status': {'allowrooms': ('someroom@conference.localhost',)},
-#                   'about': {'denyusers': ('*@evilhost',), 'allowrooms': ('room1@conference.localhost', 'room2@conference.localhost')},
-#                   'uptime': {'allowusers': BOT_ADMINS},
-#                   'help': {'allowmuc': False},
-#                   'help': {'allowmuc': False},
-#                   'ChatRoom:*': {'allowusers': BOT_ADMINS},
-#                  }
+# ACCESS_CONTROLS = {'status': {'allowrooms': ('someroom@conference.localhost',)},
+#                    'about': {'denyusers': ('*@evilhost',), 'allowrooms': ('room1@conference.localhost', 'room2@conference.localhost')},
+#                    'uptime': {'allowusers': BOT_ADMINS},
+#                    'help': {'allowmuc': False},
+#                    'help': {'allowmuc': False},
+#                    'ChatRoom:*': {'allowusers': BOT_ADMINS},
+#                   }
+ACCESS_CONTROLS = {
+    'status*': {'allowusers': BOT_ADMINS},
+    'about': {'allowusers': BOT_ADMINS},
+    'uptime': {'allowusers': BOT_ADMINS},
+    # 'help': {'allowusers': BOT_ADMINS},
+    'room*': {'allowusers': BOT_ADMINS},
+    'flows*': {'allowusers': BOT_ADMINS},
+    'apropos': {'allowusers': BOT_ADMINS},
+    'repos*': {'allowusers': BOT_ADMINS},
+}
 
 # Uncomment and set this to True to hide the restricted commands from
 # the help output.
-#HIDE_RESTRICTED_COMMANDS = False
+HIDE_RESTRICTED_COMMANDS = True
 
 # Uncomment and set this to True to ignore commands from users that have no
 # access for these instead of replying with error message.
-#HIDE_RESTRICTED_ACCESS = False
+HIDE_RESTRICTED_ACCESS = True
 
 # A list of commands which should be responded to in private, even if
 # the command was given in a MUC. For example:
