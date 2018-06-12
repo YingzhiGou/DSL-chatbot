@@ -4,15 +4,11 @@ from errbot import BotPlugin, botcmd, re_botcmd
 
 from DSLChatbot.learning.bots import DeepQABot
 
-bot = DeepQABot()
+
 
 
 class DeepQA(BotPlugin):
-    """
-    This is a very basic plugin to try out your new installation and get you started.
-    Feel free to tweak me to experiment with Errbot.
-    You can find me in your init directory in the subdirectory plugins.
-    """
+    bot = DeepQABot()
 
     @botcmd  # flags a command
     def test_deepqa(self, msg, args):  # a command callable with !tryme
@@ -23,6 +19,5 @@ class DeepQA(BotPlugin):
         """
         return 'It *works* !'  # This string format is markdown.
 
-    @re_botcmd(pattern=r".*", prefixed=False, flags=re.IGNORECASE)
-    def listen_to_talk(self, msg, match):
-        return bot.reply(msg.body)
+    def callback_message(self, msg):
+        self.send(msg.frm, DeepQA.bot.reply(msg.body))
