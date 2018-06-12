@@ -25,7 +25,7 @@ class DeepQABot(LearningChatBot):
         super(DeepQABot, self).__init__(name)
         self._load_model()
 
-    def reply(self, input):
+    def _get_answer(self, input):
         return self.chatbot.daemonPredict(input)
 
     def _close(self):
@@ -42,7 +42,7 @@ class DeepQABot(LearningChatBot):
     def _load_model(self):
         # load cornell-tf1.3
         self.chatbot = Chatbot()
-        self._init_deep_qa_bot(self.chatbot, "Rufus", args=[
+        self._init_deep_qa_bot(self.chatbot, "cornell-tf1.3", args=[
             "--modelTag", "cornell-tf1.3",
             "--keepAll",
             "--test", "daemon",

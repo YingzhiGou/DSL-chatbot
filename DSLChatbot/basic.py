@@ -9,7 +9,12 @@ class BasicChatBot(object):
     def __get_name(self):
         return self._my_name
 
-    #my_name = property(__get_name)
+    def _get_answer(self, question):
+        return None
 
-    def reply(self, input):
-        pass
+    my_name = property(__get_name)
+
+    def reply(self, input, frm=None):
+        answer = self._get_answer(input)
+        self._logger.info("[{}] {}    [{}] {}".format(frm if frm is not None else "USER", input, self._my_name, answer))
+        return answer
