@@ -1,1 +1,5 @@
 errbot
+tensorflow==1.5
+numpy
+tqdm
+nltk

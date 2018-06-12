@@ -9,7 +9,7 @@ class BasicChatBot(object):
     def __get_name(self):
         return self._my_name
 
-    my_name = property(__get_name)
+    #my_name = property(__get_name)
 
     def reply(self, input):
         pass

@@ -1,0 +1,9 @@
+[Core]
+Name = DeepQA
+Module = deepqa
+
+[Documentation]
+Description = A chatbot built using pre-trained DeepQA models
+
+[Python]
+Version = 3

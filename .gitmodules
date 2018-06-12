@@ -1,0 +1,3 @@
+[submodule "DeepQA"]
+	path = DeepQA
+	url = https://github.com/Conchylicultor/DeepQA.git
