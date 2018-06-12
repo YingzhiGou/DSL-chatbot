@@ -17,6 +17,11 @@
 ##########################################################################
 
 import logging
+import os, sys
+
+ERRBOT_ROOT = os.path.dirname(os.path.abspath(__file__))
+# this is a hack for now todo find a better way of making shared files available to the plugin
+sys.path.append(os.path.dirname(ERRBOT_ROOT))
 
 ##########################################################################
 # Core Errbot configuration                                              #
@@ -59,11 +64,11 @@ BACKEND = 'Text'  # defaults to XMPP
 
 STORAGE = 'Shelf'  # defaults to filestorage (python shelf).
 
-# BOT_EXTRA_STORAGE_PLUGINS_DIR = None  # extra search path to find custom storage plugins
+BOT_EXTRA_STORAGE_PLUGINS_DIR = None  # extra search path to find custom storage plugins
 
 # The location where all of Err's data should be stored. Make sure to set
 # this to a directory that is writable by the user running the bot.
-BOT_DATA_DIR = 'data'
+BOT_DATA_DIR = os.path.join(ERRBOT_ROOT, 'data')
 
 ### Repos and plugins config.
 
@@ -82,7 +87,7 @@ BOT_DATA_DIR = 'data'
 # locally before publishing it. Note that you can specify only a single
 # directory, however you are free to create subdirectories with multiple
 # plugins inside this directory.
-BOT_EXTRA_PLUGIN_DIR = "./plugins"
+BOT_EXTRA_PLUGIN_DIR = os.path.join(ERRBOT_ROOT, "plugins")
 
 # If you use an external backend as a plugin,
 # this is where you tell Errbot where to find it.
@@ -126,7 +131,7 @@ BOT_LOG_FILE = BOT_DATA_DIR + '/err.log'
 # If you encounter any issues with Err, please set your log level to
 # logging.DEBUG and attach a log with your bug report to aid the developers
 # in debugging the issue.
-BOT_LOG_LEVEL = logging.INFO
+BOT_LOG_LEVEL = logging.DEBUG
 
 # Enable logging to sentry (find out more about sentry at www.getsentry.com).
 # This is optional and disabled by default.
@@ -197,7 +202,7 @@ BOT_IDENTITY = {
 #
 # Unix-style glob patterns are supported, so 'gbin@localhost'
 # would be considered an admin if setting '*@localhost'.
-BOT_ADMINS = ('@DSL', '*@localhost',)
+BOT_ADMINS = ('@DSL',)
 
 # Set of admins that wish to receive administrative bot notifications.
 #BOT_ADMINS_NOTIFICATIONS = ()
@@ -231,7 +236,7 @@ BOT_PREFIX = '!'
 # Uncomment the following and set it to True if you want the prefix to be
 # optional for normal chat.
 # (Meaning messages sent directly to the bot as opposed to within a MUC)
-BOT_PREFIX_OPTIONAL_ON_CHAT = True
+BOT_PREFIX_OPTIONAL_ON_CHAT = False
 
 # You might wish to have your bot respond by being called with certain
 # names, rather than the BOT_PREFIX above. This option allows you to
