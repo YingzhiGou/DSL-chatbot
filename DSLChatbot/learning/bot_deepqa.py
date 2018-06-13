@@ -5,15 +5,16 @@ import tensorflow as tf
 from tensorflow.python import debug as tf_debug
 
 from DSLChatbot import DEEPQA_PATH
+from DSLChatbot.learning.bot import LearningChatBot
 from chatbot.chatbot import Chatbot
 from chatbot.model import Model
 from chatbot.textdata import TextData
-from learning.bot import LearningChatBot
 
 
 class DeepQABot(LearningChatBot):
     def __init__(self, name="DeepQA"):
         super(DeepQABot, self).__init__(name)
+        self._max_length = 100  # max length
         self._load_model()
 
     def _get_answer(self, input, conversation_id=None):
@@ -62,6 +63,8 @@ class DeepQABot(LearningChatBot):
                     "--rootDir", DEEPQA_PATH
                 ])
                 self._deepqa_models.append(model)
+                if self._max_length > model.args.maxLength:
+                    self._max_length = model.args.maxLength
             except Exception as e:
                 self._logger.warning("failed to load model {}".format(saved_model))
                 self._logger.error(e)

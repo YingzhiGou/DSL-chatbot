@@ -2,7 +2,7 @@ import time
 
 from errbot import BotPlugin, botcmd
 
-from learning import DeepQABot
+from DSLChatbot.learning import DeepQABot
 
 
 class DeepQA(BotPlugin):

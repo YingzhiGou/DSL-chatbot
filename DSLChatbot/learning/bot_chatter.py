@@ -3,7 +3,7 @@ import os
 from chatterbot import ChatBot
 
 from DSLChatbot import DSL_ROOT
-from learning.bot import LearningChatBot
+from DSLChatbot.learning.bot import LearningChatBot
 
 
 class ChatterBot(LearningChatBot):

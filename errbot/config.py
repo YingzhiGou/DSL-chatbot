@@ -204,7 +204,7 @@ BOT_IDENTITY = {
 # Unix-style glob patterns are supported, so 'gbin@localhost'
 # would be considered an admin if setting '*@localhost'.
 if 'BOT_ADMINS' in vars() or 'BOT_ADMINS' in globals():
-    BOT_ADMINS = BOT_ADMINS + ('@DSL',)
+    pass
 else:
     BOT_ADMINS = ('@DSL',)
 
