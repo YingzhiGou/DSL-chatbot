@@ -1,11 +1,8 @@
-import re
 import time
 
-from errbot import BotPlugin, botcmd, re_botcmd
+from errbot import BotPlugin, botcmd
 
 from DSLChatbot.learning.bots import DeepQABot
-
-
 
 
 class DeepQA(BotPlugin):
@@ -34,5 +31,12 @@ class DeepQA(BotPlugin):
             self._bot.remove_reaction(mess, "hourglass")
 
     def callback_message(self, msg):
-        answer =  DeepQA.bot.reply(msg.body)
+        user = msg.frm
+        if self._bot.mode == 'telegram':
+            if msg.body.startswith('/'):
+                # telegram command, don't reply
+                return
+            user = "{}({})".format(msg.frm.nick, msg.frm.id)
+
+        answer = DeepQA.bot.reply(msg.body, user)
         self.send(msg.frm,answer)
