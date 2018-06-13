@@ -4,3 +4,4 @@ numpy
 tqdm
 nltk
 python-telegram-bot
+chatterbot

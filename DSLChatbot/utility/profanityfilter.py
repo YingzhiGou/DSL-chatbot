@@ -395,6 +395,9 @@ class ProfanitiesFilter(object):
     def clean(self, text):
         """Cleans a string from profanity."""
 
+        if text is None:
+            return text
+
         regexp_insidewords = {
             True: r'(%s)',
             False: r'\b(%s)\b',

@@ -18,13 +18,13 @@ class BasicChatBot(object):
     def __get_name(self):
         return self._my_name
 
-    def _get_answer(self, question):
-        return None
+    def _get_answer(self, question, conversation_id=None):
+        raise NotImplemented
 
     my_name = property(__get_name)
 
     def reply(self, input, frm=None):
-        answer = self._get_answer(input)
+        answer = self._get_answer(input, frm)
         if self._profanities_filter:
             answer = self._profanities_filter.clean(answer)
         self._logger.info("[{}] {}    [{}] {}".format(frm if frm is not None else "USER", input, self._my_name, answer))
