@@ -3,3 +3,4 @@ tensorflow==1.5
 numpy
 tqdm
 nltk
+python-telegram-bot
