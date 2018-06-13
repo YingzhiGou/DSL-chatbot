@@ -14,6 +14,7 @@ class ChatterBot(LearningChatBot):
             trainer='chatterbot.trainers.ChatterBotCorpusTrainer',
             storage_adapter='chatterbot.storage.SQLStorageAdapter',
             database=os.path.join(storage, '{}.sqlite3'.format(self._my_name)),
+            # database=":memory:",
             logic_adapters=[
                 "chatterbot.logic.BestMatch",
                 'chatterbot.logic.MathematicalEvaluation',
@@ -45,7 +46,7 @@ class ChatterBot(LearningChatBot):
                     'default_response': 'I am sorry, but I do not understand.'
                 }
             ],
-            read_only=True
+            # read_only=True
         )
         self._model.initialize()
         self._conversation_dict = {}
