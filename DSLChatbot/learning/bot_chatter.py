@@ -17,28 +17,28 @@ class ChatterBot(LearningChatBot):
             logic_adapters=[
                 "chatterbot.logic.BestMatch",
                 'chatterbot.logic.MathematicalEvaluation',
-                {
-                    'import_path': 'chatterbot.logic.TimeLogicAdapter',
-                    'positive': [
-                        'what time is it',
-                        'hey what time is it',
-                        'do you have the time',
-                        'do you know the time',
-                        'do you know what time it is',
-                        'what is the time'
-                    ],
-                    'negiative': [
-                        'it is time to go to sleep',
-                        'what is your favorite color',
-                        'i had a great time',
-                        'thyme is my favorite herb',
-                        'do you have time to look at my essay',
-                        'how do you have the time to do all this'
-                        'what is it',
-                        'how are you'
-                    ]
-
-                },
+                # {
+                #     'import_path': 'chatterbot.logic.TimeLogicAdapter',
+                #     'positive': [
+                #         'what time is it',
+                #         'hey what time is it',
+                #         'do you have the time',
+                #         'do you know the time',
+                #         'do you know what time it is',
+                #         'what is the time'
+                #     ],
+                #     'negiative': [
+                #         'it is time to go to sleep',
+                #         'what is your favorite color',
+                #         'i had a great time',
+                #         'thyme is my favorite herb',
+                #         'do you have time to look at my essay',
+                #         'how do you have the time to do all this'
+                #         'what is it',
+                #         'how are you'
+                #     ]
+                #
+                # },
                 {
                     'import_path': 'chatterbot.logic.LowConfidenceAdapter',
                     'threshold': 0.65,
