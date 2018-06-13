@@ -7,13 +7,13 @@ from learning.bot import LearningChatBot
 
 
 class ChatterBot(LearningChatBot):
-    def __init__(self, name="ChatterBot"):
+    def __init__(self, name="ChatterBot", storage=DSL_ROOT):
         super(ChatterBot, self).__init__(name)
         self._model = ChatBot(
             name,
             trainer='chatterbot.trainers.ChatterBotCorpusTrainer',
             storage_adapter='chatterbot.storage.SQLStorageAdapter',
-            database=os.path.join(DSL_ROOT, 'database.sqlite3'),
+            database=os.path.join(storage, '{}.sqlite3'.format(self._my_name)),
             logic_adapters=[
                 "chatterbot.logic.BestMatch",
                 'chatterbot.logic.MathematicalEvaluation',
@@ -66,6 +66,9 @@ class ChatterBot(LearningChatBot):
             self._conversation_dict[conversation_id] = self._model.storage.create_conversation()
         response = self._model.get_response(question, conversation_id=self._conversation_dict[conversation_id])
         return response.text
+
+    def clear_conversion(self):
+        self._conversation_dict.clear()
 
 
 if __name__ == "__main__":
