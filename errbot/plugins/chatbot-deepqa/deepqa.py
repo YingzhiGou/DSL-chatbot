@@ -17,13 +17,15 @@ class DeepQA(BotPlugin):
             # don't start the first time activate called
             DeepQA.autostarted = True
             self.log.info("Skip auto activate, this plugin has to be activated manually")
+            self._deepqa_bot = None
         else:
             super(DeepQA, self).activate()
             self._deepqa_bot = DeepQABot()
 
     def deactivate(self):
         """ clean bot memory"""
-        self._deepqa_bot._close()
+        if "_deepqa_bot" in self.__dict__ and self._deepqa_bot is not None:
+            self._deepqa_bot._close()
         super(DeepQA, self).deactivate()
 
     @botcmd  # flags a command
@@ -65,9 +67,13 @@ class DeepQA(BotPlugin):
         self.send(msg.frm, """
     Greetings Human,
     
-    You are talking to a chatbot created for the Human Robot Friendship Ball 2018, made by the Decision Systems Lab, University of Wollongong, Australia.
+    You are talking to a chatbot created for the Human Robot Friendship Ball 2018, made by the Decision Systems Lab (DSL), University of Wollongong, Australia.
+    
+    I am a deep artificial neural network (DeepQA) trained on movie dialogs. Ask me anything, and I may not answer you correctly :)
     
     Happy Chatting!
     
-    Website: http://www.dsl.uow.edu.au
+    DSL: http://www.dsl.uow.edu.au
+    Cornell Movie Dialogs: http://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html
+    DeepQA: https://github.com/Conchylicultor/DeepQA
     """)

@@ -1,4 +1,5 @@
 import os
+import random
 
 import tensorflow as tf
 from tensorflow.python import debug as tf_debug
@@ -13,6 +14,7 @@ from chatbot.textdata import TextData
 class LearningChatBot(BasicChatBot):
     def __init__(self, name="bot"):
         super(LearningChatBot, self).__init__(name)
+        self._deepqa_models = []
 
     def train(self, copus):
         pass
@@ -24,13 +26,25 @@ class DeepQABot(LearningChatBot):
         self._load_model()
 
     def _get_answer(self, input):
-        return self.chatbot.daemonPredict(input)
+        answers = []
+        for models in self._deepqa_models:
+            answer = models.daemonPredict(input)
+            if not answer:
+                self._logger.debug("model {} did not produce answer for \"{}\"".format(models.args.modelTag, input))
+                continue
+            self._logger.debug("model {} says \"{}\" TO \"{}\"".format(models.args.modelTag, answer, input))
+            answers.append(answer)
+        if answers is None:
+            return None
+        return random.choice(answers)
 
     def _close(self):
         """ A utility function to close the daemon when finish
         """
-        self._logger.info("Closing Tensorflow session")
-        self.chatbot.sess.close()
+        self._logger.info("Closing Tensorflow sessions")
+        for model in self._deepqa_models:
+            self._logger.debug("closing model {}".format(model.args.modelTag))
+            model.sess.close()
 
     def __enter__(self):
         return self
@@ -39,25 +53,36 @@ class DeepQABot(LearningChatBot):
         self._close()
 
     def _load_model(self):
-        # load cornell-tf1.3
-        self.chatbot = Chatbot()
-        self._init_deep_qa_bot(self.chatbot, "cornell-tf1.3", args=[
-            "--modelTag", "cornell-tf1.3",
-            "--keepAll",
-            "--test", "daemon",
-            "--rootDir", DEEPQA_PATH
-        ])
+        model_path = os.path.join(DEEPQA_PATH, 'save')
+        saved_models = os.listdir(model_path)
+        saved_models = [saved_model.replace("model-", "") for saved_model in saved_models if
+                        not saved_model.startswith(".") and os.path.isdir(os.path.join(model_path, saved_model))]
 
-    def _init_deep_qa_bot(self, chatbot, name=None, args=None):
+        self._logger.info('TensorFlow detected: v{}'.format(tf.__version__))
+
+        for saved_model in saved_models:
+            self._logger.info("loading model {}".format(saved_model))
+            model = Chatbot()
+            try:
+                self._init_deep_qa_bot(model, args=[
+                    "--modelTag", saved_model,
+                    "--keepAll",
+                    "--test", "daemon",
+                    "--rootDir", DEEPQA_PATH
+                ])
+                self._deepqa_models.append(model)
+            except Exception as e:
+                self._logger.warning("failed to load model {}".format(saved_model))
+                self._logger.error(e)
+
+        self._logger.info("loaded model {}".format([model.args.modelTag for model in self._deepqa_models]))
+
+    def _init_deep_qa_bot(self, chatbot, args=None):
         """
         Launch the training and/or the interactive mode
         almost the same as chatbot.main() except the removal of print and replaced with log
         """
-        self._logger.info('[{}] Welcome to DeepQA v0.1 !'.format(name))
-        self._logger.info('[{}] TensorFlow detected: v{}'.format(name, tf.__version__))
-
         # General initialisation
-
         chatbot.args = chatbot.parseArgs(args)
 
         if not chatbot.args.rootDir:
@@ -74,7 +99,7 @@ class DeepQABot(LearningChatBot):
         # vocabulary). Add a compatibility mode which allow to launch a model trained on a different vocabulary (
         # remap the word2id/id2word variables).
         if chatbot.args.createDataset:
-            self._logger.info('[{}] Dataset created! Thanks for using this program'.format(name))
+            self._logger.info('[{}] Dataset created! Thanks for using this program'.format(chatbot.args.modelTag))
             return  # No need to go further
 
         # Prepare the model
@@ -95,7 +120,7 @@ class DeepQABot(LearningChatBot):
             chatbot.sess = tf_debug.LocalCLIDebugWrapperSession(chatbot.sess)
             chatbot.sess.add_tensor_filter("has_inf_or_nan", tf_debug.has_inf_or_nan)
 
-        self._logger.info('[{}] Initialize variables...'.format(name))
+        self._logger.info('[{}] Initialize variables...'.format(chatbot.args.modelTag))
         chatbot.sess.run(tf.global_variables_initializer())
 
         # Reload the model eventually (if it exist.), on testing mode, the models are not loaded here (but in predictTestset)
@@ -110,21 +135,28 @@ class DeepQABot(LearningChatBot):
             if chatbot.args.test == Chatbot.TestMode.INTERACTIVE:
                 chatbot.mainTestInteractive(chatbot.sess)
             elif chatbot.args.test == Chatbot.TestMode.ALL:
-                self._logger.info('[{}] Start predicting...'.format(name))
+                self._logger.info('[{}] Start predicting...'.format(chatbot.args.modelTag))
                 chatbot.predictTestset(chatbot.sess)
-                self._logger.info('[{}] All predictions done'.format(name))
+                self._logger.info('[{}] All predictions done'.format(chatbot.args.modelTag))
             elif chatbot.args.test == Chatbot.TestMode.DAEMON:
-                self._logger.info('[{}] Daemon mode, running in background...'.format(name))
+                self._logger.info('[{}] Daemon mode, running in background...'.format(chatbot.args.modelTag))
             else:
-                raise RuntimeError('[{}] Unknown test mode: {}'.format(name, chatbot.args.test))  # Should never happen
+                raise RuntimeError('[{}] Unknown test mode: {}'.format(chatbot.args.modelTag,
+                                                                       chatbot.args.test))  # Should never happen
         else:
             chatbot.mainTrain(chatbot.sess)
 
         if chatbot.args.test != Chatbot.TestMode.DAEMON:
             chatbot.sess.close()
-            self._logger.info("[{}] The End! Thanks for using this program".format(name))
+            self._logger.info("[{}] The End! Thanks for using this program".format(chatbot.args.modelTag))
+
 
 if __name__ == "__main__":
+    import logging
+
+    logging.basicConfig()
+    logging.getLogger().setLevel(logging.DEBUG)
+
     bot = DeepQABot("TEST")
     print('Testing: Launch interactive mode:')
     SENTENCES_PREFIX = ["Q. ", "A. "]
