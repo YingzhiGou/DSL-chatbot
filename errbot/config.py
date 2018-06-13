@@ -203,7 +203,10 @@ BOT_IDENTITY = {
 #
 # Unix-style glob patterns are supported, so 'gbin@localhost'
 # would be considered an admin if setting '*@localhost'.
-BOT_ADMINS = ('@DSL',)
+if 'BOT_ADMINS' in vars() or 'BOT_ADMINS' in globals:
+    BOT_ADMINS = BOT_ADMINS + ('@DSL',)
+else:
+    BOT_ADMINS = ('@DSL',)
 
 # Set of admins that wish to receive administrative bot notifications.
 #BOT_ADMINS_NOTIFICATIONS = ()

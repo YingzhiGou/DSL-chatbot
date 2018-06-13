@@ -1,15 +1,13 @@
 import os
-import sys
 
 import tensorflow as tf
 from tensorflow.python import debug as tf_debug
 
-from DSLChatbot import DSL_ROOT, DEEPQA_PATH
+from DSLChatbot import DEEPQA_PATH
 from DSLChatbot.basic import BasicChatBot
-
 from chatbot.chatbot import Chatbot
-from chatbot.textdata import TextData
 from chatbot.model import Model
+from chatbot.textdata import TextData
 
 
 class LearningChatBot(BasicChatBot):
@@ -31,6 +29,7 @@ class DeepQABot(LearningChatBot):
     def _close(self):
         """ A utility function to close the daemon when finish
         """
+        self._logger.info("Closing Tensorflow session")
         self.chatbot.sess.close()
 
     def __enter__(self):
