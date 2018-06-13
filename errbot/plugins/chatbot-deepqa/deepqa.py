@@ -71,8 +71,8 @@ class DeepQA(BotPlugin):
     Happy Chatting!
     
     DSL: http://www.dsl.uow.edu.au
-    Cornell Movie Dialogs: http://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html
     DeepQA: https://github.com/Conchylicultor/DeepQA
+    Cornell Movie Dialogs: http://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html
        """)
 
         self.send(msg.frm, """

@@ -7,6 +7,21 @@ class ChatterBot(BotPlugin):
     Feel free to tweak me to experiment with Errbot.
     You can find me in your init directory in the subdirectory plugins.
     """
+    autostarted = False
+
+    def activate(self):
+        """
+        skip auto activate when errbot starts
+        :return:
+        """
+        if not ChatterBot.autostarted:
+            # don't start the first time activate called
+            ChatterBot.autostarted = True
+            self.log.info("Skip auto activate, this plugin has to be activated manually")
+            self._deepqa_bot = None
+        else:
+            super(ChatterBot, self).activate()
+            # self._deepqa_bot = DeepQABot()
 
     @botcmd  # flags a command
     def test_chatterbot(self, msg, args):  # a command callable with !tryme
