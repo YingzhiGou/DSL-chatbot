@@ -65,15 +65,19 @@ class DeepQA(BotPlugin):
     def start(self, msg, args):
         """send hello card"""
         self.send(msg.frm, """
-    Greetings Human,
-    
-    You are talking to a chatbot created for the Human Robot Friendship Ball 2018, made by the Decision Systems Lab (DSL), University of Wollongong, Australia.
-    
-    I am a deep artificial neural network (DeepQA) trained on movie dialogs. Ask me anything, and I may not answer you correctly :)
+    ===
+    You are talking to a chatbot created for the Human Robot Friendship Ball 2018, made by the Decision Systems Lab (DSL), University of Wollongong, Australia, using a deep artificial neural network (DeepQA) that is trained on movie dialogs.
     
     Happy Chatting!
     
     DSL: http://www.dsl.uow.edu.au
     Cornell Movie Dialogs: http://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html
     DeepQA: https://github.com/Conchylicultor/DeepQA
-    """)
+       """)
+
+        self.send(msg.frm, """
+    Greetings Human,
+    
+    I learned language from movie dialogs. Ask me anything, and I may not answer you correctly :)
+    """
+                  )

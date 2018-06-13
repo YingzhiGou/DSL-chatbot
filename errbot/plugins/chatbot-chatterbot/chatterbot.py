@@ -21,14 +21,16 @@ class ChatterBot(BotPlugin):
     def start(self, msg, args):
         """send hello card"""
         self.send(msg.frm, """
-        Greetings Human,
-
         You are talking to a chatbot created for the Human Robot Friendship Ball 2018, made by the Decision Systems Lab (DSL), University of Wollongong, Australia.
-
-        I am a machine-learning based conversational bot built using ChatterBot. Ask me anything, and I may not answer you correctly :)
-
-        Happy Chatting!
 
         DSL: http://www.dsl.uow.edu.au
         ChatterBot: https://github.com/gunthercox/ChatterBot
+        """)
+
+        self.send(msg.frm, """
+        Greetings Human,
+        
+        I am a machine-learning based conversational bot. Ask me anything, and I may not answer you correctly :)
+
+        Happy Chatting!
         """)
