@@ -45,6 +45,7 @@ class ChatterBot(LearningChatBot):
                     'default_response': 'I am sorry, but I do not understand.'
                 }
             ],
+            read_only=True
         )
         self._model.initialize()
         self._conversation_dict = {}
@@ -58,8 +59,8 @@ class ChatterBot(LearningChatBot):
             # Train based on the corpus
             self._model.train(corpus)
 
-    def train(self, corpus):
-        self._corpora_training(corpus)
+    def train(self, *corpus):
+        self._corpora_training(*corpus)
 
     def _get_answer(self, question, conversation_id=None):
         if conversation_id not in self._conversation_dict:
@@ -74,8 +75,8 @@ class ChatterBot(LearningChatBot):
 if __name__ == "__main__":
     import logging
 
-    logging.basicConfig()
-    logging.getLogger().setLevel(logging.DEBUG)
+    # logging.basicConfig()
+    # logging.getLogger().setLevel(logging.DEBUG)
 
     bot = ChatterBot("TEST")
     print('Testing: Launch interactive mode:')
@@ -85,6 +86,6 @@ if __name__ == "__main__":
         if question == '' or question == 'exit':
             break
         elif question == "train":
-            bot.train('chatterbot.corpus.english')
+            bot.train('chatterbot.corpus')
             continue
         print('{}{}'.format(SENTENCES_PREFIX[1], bot.reply(question, "admin")))
