@@ -8,7 +8,7 @@ from DSLChatbot import DEEPQA_PATH
 from chatbot.chatbot import Chatbot
 from chatbot.model import Model
 from chatbot.textdata import TextData
-from learning.bots import LearningChatBot
+from learning.bot import LearningChatBot
 
 
 class DeepQABot(LearningChatBot):
@@ -16,7 +16,7 @@ class DeepQABot(LearningChatBot):
         super(DeepQABot, self).__init__(name)
         self._load_model()
 
-    def _get_answer(self, input):
+    def _get_answer(self, input, conversation_id=None):
         answers = []
         for models in self._deepqa_models:
             answer = models.daemonPredict(input)

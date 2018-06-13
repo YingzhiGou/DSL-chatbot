@@ -6,11 +6,11 @@ class LearningChatBot(BasicChatBot):
         super(LearningChatBot, self).__init__(name)
         self._deepqa_models = []
 
-    def train(self, copus):
-        pass
+    def train(self, corpus):
+        raise NotImplemented
 
     def save(self, file=None):
-        pass
+        raise NotImplemented
 
     def load(self, file=None):
-        pass
+        raise NotImplemented
