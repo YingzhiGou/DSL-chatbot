@@ -82,8 +82,11 @@ class ChatterBot(BotPlugin):
     def start(self, msg, args):
         """send hello card"""
         self.send(msg.frm, """
+        ===
         You are talking to a chatbot created for the Human Robot Friendship Ball 2018, made by the Decision Systems Lab (DSL), University of Wollongong, Australia.
-
+        
+        WARNING: Your conversation with this bot may be recorded for research purpose. 
+        
         DSL: http://www.dsl.uow.edu.au
         ChatterBot: https://github.com/gunthercox/ChatterBot
         """)
