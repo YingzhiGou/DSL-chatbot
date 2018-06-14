@@ -16,14 +16,8 @@ class ChatterBot(BotPlugin):
         skip auto activate when errbot starts
         :return:
         """
-        if not ChatterBot.autostarted:
-            # don't start the first time activate called
-            ChatterBot.autostarted = True
-            self.log.info("Skip auto activate, this plugin has to be activated manually")
-            self._chatterbot = None
-        else:
-            super(ChatterBot, self).activate()
-            self._chatterbot = DSLChatterBot(storage=self.bot_config.BOT_DATA_DIR, read_only=True)
+        super(ChatterBot, self).activate()
+        self._chatterbot = DSLChatterBot(storage=self.bot_config.BOT_DATA_DIR, read_only=True)
 
     @botcmd  # flags a command
     def test_chatterbot(self, msg, args):  # a command callable with !tryme

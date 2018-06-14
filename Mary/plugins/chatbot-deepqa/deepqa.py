@@ -13,14 +13,8 @@ class DeepQA(BotPlugin):
         skip auto activate when errbot starts
         :return:
         """
-        if not DeepQA.autostarted:
-            # don't start the first time activate called
-            DeepQA.autostarted = True
-            self.log.info("Skip auto activate, this plugin has to be activated manually")
-            self._deepqa_bot = None
-        else:
-            super(DeepQA, self).activate()
-            self._deepqa_bot = DeepQABot()
+        super(DeepQA, self).activate()
+        self._deepqa_bot = DeepQABot()
 
     def deactivate(self):
         """ clean bot memory"""
