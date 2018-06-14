@@ -301,18 +301,21 @@ BOT_ALT_PREFIX_CASEINSENSITIVE = True
 #                    'help': {'allowmuc': False},
 #                    'ChatRoom:*': {'allowusers': BOT_ADMINS},
 #                   }
+
+ACCESS_CONTROLS_DEFAULT = {'allowusers': BOT_ADMINS}
 ACCESS_CONTROLS = {
-    'status*': {'allowusers': BOT_ADMINS},
-    'about': {'allowusers': BOT_ADMINS},
-    'uptime': {'allowusers': BOT_ADMINS},
-    # 'help': {'allowusers': BOT_ADMINS},
-    'room*': {'allowusers': BOT_ADMINS},
-    'flows*': {'allowusers': BOT_ADMINS},
-    'apropos': {'allowusers': BOT_ADMINS},
-    'repos*': {'allowusers': BOT_ADMINS},
-    'test_*': {'allowusers': BOT_ADMINS},
-    'train*': {'allowusers': BOT_ADMINS},
-    'clear*': {'allowusers': BOT_ADMINS},
+    # 'status*': {'allowusers': BOT_ADMINS},
+    # 'about': {'allowusers': BOT_ADMINS},
+    # 'uptime': {'allowusers': BOT_ADMINS},
+    'help': {'allowusers': ('*')},
+    # 'room*': {'allowusers': BOT_ADMINS},
+    # 'flows*': {'allowusers': BOT_ADMINS},
+    # 'apropos': {'allowusers': BOT_ADMINS},
+    # 'repos*': {'allowusers': BOT_ADMINS},
+    # 'test_*': {'allowusers': BOT_ADMINS},
+    # 'train*': {'allowusers': BOT_ADMINS},
+    # 'clear*': {'allowusers': BOT_ADMINS},
+    'TextCmds:*': {'allowusers': ('*')}
 }
 
 # Uncomment and set this to True to hide the restricted commands from

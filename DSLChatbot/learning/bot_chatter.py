@@ -6,15 +6,21 @@ from DSLChatbot.learning.bot import LearningChatBot
 
 
 class ChatterBot(LearningChatBot):
-    def __init__(self, name="ChatterBot", storage=":memory:", language_filter=True):
+    def __init__(self, name="ChatterBot", storage=":memory:", language_filter=True, read_only=False):
         super(ChatterBot, self).__init__(name, language_filter)
+        self._read_only = read_only
         if storage == ":memory:":
             # inmemory SQLite database
             self._database_path = storage
         else:
             self._database_path = os.path.join(storage, '{}.sqlite3'.format(self._my_name))
+        self._model = None
+        self._conversation_dict = {}
+        self._init_chatter_bot()
+
+    def _init_chatter_bot(self):
         self._model = ChatBot(
-            name,
+            self._my_name,
             trainer='chatterbot.trainers.ChatterBotCorpusTrainer',
             storage_adapter='chatterbot.storage.SQLStorageAdapter',
             database=self._database_path,
@@ -50,10 +56,23 @@ class ChatterBot(LearningChatBot):
                     'default_response': 'I am sorry, but I do not understand.'
                 }
             ],
-            # read_only=True
+            read_only=self._read_only
         )
         self._model.initialize()
-        self._conversation_dict = {}
+        self.clear_conversation()
+
+    def _get_is_learning(self):
+        return not self._read_only
+
+    def _set_is_learning(self, is_learning):
+        if self._read_only != is_learning:
+            self._logger.info("learning is already {}.".format('enabled' if is_learning else 'disabled'))
+        else:
+            self._logger.info("{}ing learning...".format('enabl' if is_learning else 'disabl'))
+            self._read_only = not is_learning
+            self._init_chatter_bot()
+
+    is_learning = property(_get_is_learning, _set_is_learning)
 
     def _corpora_training(self, corpora="chatterbot.corpus.english"):
         if isinstance(corpora, str):
@@ -65,7 +84,10 @@ class ChatterBot(LearningChatBot):
             self._model.train(corpus)
 
     def train(self, *corpus):
-        self._corpora_training(*corpus)
+        if self._read_only:
+            self._logger.warning('Not training as learning is disabled! please enable learning before start training.')
+        else:
+            self._corpora_training(*corpus)
 
     def _get_answer(self, question, conversation_id=None):
         if conversation_id not in self._conversation_dict:

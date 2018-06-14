@@ -20,10 +20,10 @@ class ChatterBot(BotPlugin):
             # don't start the first time activate called
             ChatterBot.autostarted = True
             self.log.info("Skip auto activate, this plugin has to be activated manually")
-            self._deepqa_bot = None
+            self._chatterbot = None
         else:
             super(ChatterBot, self).activate()
-            self._chatterbot = DSLChatterBot(storage=self.bot_config.BOT_DATA_DIR)
+            self._chatterbot = DSLChatterBot(storage=self.bot_config.BOT_DATA_DIR, read_only=True)
 
     @botcmd  # flags a command
     def test_chatterbot(self, msg, args):  # a command callable with !tryme
@@ -33,6 +33,17 @@ class ChatterBot(BotPlugin):
         You can find me in your init directory in the subdirectory plugins.
         """
         return 'It *works* !'  # This string format is markdown.
+
+    @staticmethod
+    def _get_status(boo):
+        return 'enabled' if boo else 'disabled'
+
+    @arg_botcmd('option', type=str, default=['enable', 'disable'], help='enable or disable learning')
+    def learning(self, msg, option):
+        reply = '[{}] Learning: {} => '.format(self._chatterbot.my_name, self._get_status(self._chatterbot.is_learning))
+        self._chatterbot.is_learning = True if option == 'enable' else False
+        reply += self._get_status(self._chatterbot.is_learning)
+        return reply
 
     def callback_message(self, msg):
         if msg.body.startswith(self.bot_config.BOT_PREFIX):
@@ -46,17 +57,26 @@ class ChatterBot(BotPlugin):
         answer = self._chatterbot.reply(msg.body, user)
         self.send(msg.frm, answer)
 
-    @botcmd
-    def clear_conversation(self, msg, args):
-        self._chatterbot.clear_conversation()
-
-    @botcmd
-    def clear_memory(self, msg, args):
-        self._chatterbot.clear_memory()
+    @arg_botcmd('args', type=str, nargs='*', default=['conversation', 'memory', 'all'])
+    def clear(self, msg, args):
+        if isinstance(args, str):
+            args = [args]
+        args = set(args)
+        if 'all' in args:
+            args.update(['conversation', 'memory'])
+        if 'conversation' in args:
+            self._chatterbot.clear_conversation()
+            yield "[{}] cleared conversation records".format(self._chatterbot.my_name)
+        if 'memory' in args:
+            self._chatterbot.clear_memory()
+            yield "[{}] cleared all memory".format(self._chatterbot.my_name)
 
     @arg_botcmd('corpus', type=str, nargs='*', default='chatterbot.corpus.english', help='list of corpus for training')
     def train(self, msg, corpus=None):
-        self._chatterbot.train(corpus)
+        if self._chatterbot.is_learning:
+            self._chatterbot.train(corpus)
+        else:
+            return "Learning is disabled, please enable learning first"
 
     @botcmd
     def start(self, msg, args):
@@ -72,6 +92,7 @@ class ChatterBot(BotPlugin):
         Greetings Human,
         
         I am a machine-learning based conversational bot. Ask me anything, and I may not answer you correctly :)
-
-        Happy Chatting!
-        """)
+        I can learn to talk from our conversation, please teach me :P
+        
+        (Admin: learning is currently *{}*)
+        """.format(self._get_status(self._chatterbot.is_learning)))
