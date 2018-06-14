@@ -85,7 +85,7 @@ class ChatterBot(BotPlugin):
         ===
         You are talking to a chatbot created for the Human Robot Friendship Ball 2018, made by the Decision Systems Lab (DSL), University of Wollongong, Australia.
         
-        WARNING: Your conversation with this bot may be recorded for research purpose. 
+        WARNING: Your conversation with this bot may be recorded for research purposes. 
         
         DSL: http://www.dsl.uow.edu.au
         ChatterBot: https://github.com/gunthercox/ChatterBot
