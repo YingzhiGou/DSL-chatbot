@@ -69,6 +69,7 @@ class ChatterBot(BotPlugin):
     def train(self, msg, corpus=None):
         if self._chatterbot.is_learning:
             self._chatterbot.train(corpus)
+            return "traing completed"
         else:
             return "Learning is disabled, please enable learning first"
 
