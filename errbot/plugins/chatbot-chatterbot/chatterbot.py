@@ -1,4 +1,6 @@
-from errbot import BotPlugin, botcmd
+from errbot import BotPlugin, botcmd, arg_botcmd
+
+from DSLChatbot.learning import ChatterBot as DSLChatterBot
 
 
 class ChatterBot(BotPlugin):
@@ -21,7 +23,7 @@ class ChatterBot(BotPlugin):
             self._deepqa_bot = None
         else:
             super(ChatterBot, self).activate()
-            # self._deepqa_bot = DeepQABot()
+            self._chatterbot = DSLChatterBot(storage=self.bot_config.BOT_DATA_DIR)
 
     @botcmd  # flags a command
     def test_chatterbot(self, msg, args):  # a command callable with !tryme
@@ -31,6 +33,30 @@ class ChatterBot(BotPlugin):
         You can find me in your init directory in the subdirectory plugins.
         """
         return 'It *works* !'  # This string format is markdown.
+
+    def callback_message(self, msg):
+        if msg.body.startswith(self.bot_config.BOT_PREFIX):
+            # telegram command, don't reply
+            return
+
+        user = msg.frm
+        if self._bot.mode == 'telegram':
+            user = "{}({})".format(msg.frm.nick, msg.frm.id)
+
+        answer = self._chatterbot.reply(msg.body, user)
+        self.send(msg.frm, answer)
+
+    @botcmd
+    def clear_conversation(self, msg, args):
+        self._chatterbot.clear_conversation()
+
+    @botcmd
+    def clear_memory(self, msg, args):
+        self._chatterbot.clear_memory()
+
+    @arg_botcmd('corpus', type=str, nargs='*', default='chatterbot.corpus.english', help='list of corpus for training')
+    def train(self, msg, corpus=None):
+        self._chatterbot.train(corpus)
 
     @botcmd
     def start(self, msg, args):

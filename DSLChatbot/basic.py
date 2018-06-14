@@ -4,7 +4,7 @@ from DSLChatbot.utility.profanityfilter import ProfanitiesFilter
 
 
 class BasicChatBot(object):
-    def __init__(self, name="bot", language_filter=True):
+    def __init__(self, name, language_filter):
         self._my_name = name
         self._logger = logging.getLogger(self.__class__.__name__)
 

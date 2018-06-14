@@ -2,8 +2,8 @@ from DSLChatbot.basic import BasicChatBot
 
 
 class LearningChatBot(BasicChatBot):
-    def __init__(self, name="bot"):
-        super(LearningChatBot, self).__init__(name)
+    def __init__(self, name, language_filter):
+        super(LearningChatBot, self).__init__(name, language_filter)
         self._deepqa_models = []
 
     def train(self, corpus):

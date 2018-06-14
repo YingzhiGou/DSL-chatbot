@@ -2,18 +2,22 @@ import os
 
 from chatterbot import ChatBot
 
-from DSLChatbot import DSL_ROOT
 from DSLChatbot.learning.bot import LearningChatBot
 
 
 class ChatterBot(LearningChatBot):
-    def __init__(self, name="ChatterBot", storage=DSL_ROOT):
-        super(ChatterBot, self).__init__(name)
+    def __init__(self, name="ChatterBot", storage=":memory:", language_filter=True):
+        super(ChatterBot, self).__init__(name, language_filter)
+        if storage == ":memory:":
+            # inmemory SQLite database
+            self._database_path = storage
+        else:
+            self._database_path = os.path.join(storage, '{}.sqlite3'.format(self._my_name))
         self._model = ChatBot(
             name,
             trainer='chatterbot.trainers.ChatterBotCorpusTrainer',
             storage_adapter='chatterbot.storage.SQLStorageAdapter',
-            database=os.path.join(storage, '{}.sqlite3'.format(self._my_name)),
+            database=self._database_path,
             # database=":memory:",
             logic_adapters=[
                 "chatterbot.logic.BestMatch",
@@ -69,12 +73,22 @@ class ChatterBot(LearningChatBot):
         response = self._model.get_response(question, conversation_id=self._conversation_dict[conversation_id])
         return response.text
 
-    def clear_conversion(self):
+    def clear_conversation(self):
+        self._logger.info("Cleaning all {} conversations".format(len(self._conversation_dict)))
         self._conversation_dict.clear()
+
+    def clear_memory(self):
+        """this will clear ererything the bot have learnt"""
+        self._logger.info("Clearing all my memories, i will be reborn!")
+        self._model.storage.drop()
+        if os.path.isfile(self._database_path):
+            self._logger.debug("removing database file: {}".format(self._database_path))
+            os.remove(self._database_path)
+        self._logger.debug("building new database {}".format(self._database_path))
+        self._model.storage.create()
 
 
 if __name__ == "__main__":
-    import logging
 
     # logging.basicConfig()
     # logging.getLogger().setLevel(logging.DEBUG)
