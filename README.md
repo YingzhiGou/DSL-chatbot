@@ -3,7 +3,7 @@ DSL chatbots for Human Robot Friendship Ball 2018 in Sydney, made in the Decisio
 
 
 ## install
-'''sh
+```sh
 pip install -r requirements.txt
 python3 -m nltk.downloader punkt
-'''
+```
