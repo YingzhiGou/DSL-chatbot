@@ -69,7 +69,7 @@ class DeepQA(BotPlugin):
     ===
     You are talking to a chatbot created for the Human Robot Friendship Ball 2018, made by the Decision Systems Lab (DSL), University of Wollongong, Australia, using a deep artificial neural network (DeepQA) that is trained on movie dialogs.
     
-    WARNING: Your conversation with this bot may be recorded for research purpose. 
+    WARNING: Your conversation with this bot may be recorded for research purposes. 
     
     Happy Chatting!
     
