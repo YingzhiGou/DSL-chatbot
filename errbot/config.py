@@ -132,7 +132,7 @@ BOT_LOG_FILE = BOT_DATA_DIR + '/err.log'
 # If you encounter any issues with Err, please set your log level to
 # logging.DEBUG and attach a log with your bug report to aid the developers
 # in debugging the issue.
-BOT_LOG_LEVEL = logging.INFO
+BOT_LOG_LEVEL = logging.DEBUG
 
 # Enable logging to sentry (find out more about sentry at www.getsentry.com).
 # This is optional and disabled by default.
@@ -301,15 +301,21 @@ BOT_ALT_PREFIX_CASEINSENSITIVE = True
 #                    'help': {'allowmuc': False},
 #                    'ChatRoom:*': {'allowusers': BOT_ADMINS},
 #                   }
+
+ACCESS_CONTROLS_DEFAULT = {'allowusers': BOT_ADMINS}
 ACCESS_CONTROLS = {
-    'status*': {'allowusers': BOT_ADMINS},
-    'about': {'allowusers': BOT_ADMINS},
-    'uptime': {'allowusers': BOT_ADMINS},
-    # 'help': {'allowusers': BOT_ADMINS},
-    'room*': {'allowusers': BOT_ADMINS},
-    'flows*': {'allowusers': BOT_ADMINS},
-    'apropos': {'allowusers': BOT_ADMINS},
-    'repos*': {'allowusers': BOT_ADMINS},
+    # 'status*': {'allowusers': BOT_ADMINS},
+    # 'about': {'allowusers': BOT_ADMINS},
+    # 'uptime': {'allowusers': BOT_ADMINS},
+    'help': {'allowusers': ('*')},
+    # 'room*': {'allowusers': BOT_ADMINS},
+    # 'flows*': {'allowusers': BOT_ADMINS},
+    # 'apropos': {'allowusers': BOT_ADMINS},
+    # 'repos*': {'allowusers': BOT_ADMINS},
+    # 'test_*': {'allowusers': BOT_ADMINS},
+    # 'train*': {'allowusers': BOT_ADMINS},
+    # 'clear*': {'allowusers': BOT_ADMINS},
+    'TextCmds:*': {'allowusers': ('*')}
 }
 
 # Uncomment and set this to True to hide the restricted commands from

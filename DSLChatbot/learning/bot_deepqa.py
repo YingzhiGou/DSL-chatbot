@@ -12,8 +12,8 @@ from chatbot.textdata import TextData
 
 
 class DeepQABot(LearningChatBot):
-    def __init__(self, name="DeepQA"):
-        super(DeepQABot, self).__init__(name)
+    def __init__(self, name="DeepQA", language_filter=True):
+        super(DeepQABot, self).__init__(name, language_filter=language_filter)
         self._max_length = 100  # max length
         self._load_model()
 

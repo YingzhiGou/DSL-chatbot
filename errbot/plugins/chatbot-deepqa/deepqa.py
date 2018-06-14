@@ -38,7 +38,7 @@ class DeepQA(BotPlugin):
         return 'It *works* !'  # This string format is markdown.
 
     @botcmd
-    def longcompute(self, mess, args):
+    def test_longcompute(self, mess, args):
         if self._bot.mode == "slack":
             self._bot.add_reaction(mess, "hourglass")
         else:
@@ -51,11 +51,12 @@ class DeepQA(BotPlugin):
             self._bot.remove_reaction(mess, "hourglass")
 
     def callback_message(self, msg):
+        if msg.body.startswith(self.bot_config.BOT_PREFIX):
+            # telegram command, don't reply
+            return
+
         user = msg.frm
         if self._bot.mode == 'telegram':
-            if msg.body.startswith('/'):
-                # telegram command, don't reply
-                return
             user = "{}({})".format(msg.frm.nick, msg.frm.id)
 
         answer = self._deepqa_bot.reply(msg.body, user)
