@@ -26,7 +26,11 @@ class ChatterBot(LearningChatBot):
             database=self._database_path,
             # database=":memory:",
             logic_adapters=[
-                "chatterbot.logic.BestMatch",
+                {
+                    "import_path": "chatterbot.logic.BestMatch",
+                    # "statement_comparison_function": "chatterbot.comparisons.levenshtein_distance",
+                    "response_selection_method": "chatterbot.response_selection.get_random_response"
+                },
                 'chatterbot.logic.MathematicalEvaluation',
                 # {
                 #     'import_path': 'chatterbot.logic.TimeLogicAdapter',
