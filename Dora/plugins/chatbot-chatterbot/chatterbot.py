@@ -17,7 +17,7 @@ class ChatterBot(BotPlugin):
         :return:
         """
         super(ChatterBot, self).activate()
-        self._chatterbot = DSLChatterBot(storage=self.bot_config.BOT_DATA_DIR, read_only=True)
+        self._chatterbot = DSLChatterBot(storage=self.bot_config.BOT_DATA_DIR, name='Dora', read_only=True)
 
     @botcmd  # flags a command
     def test_chatterbot(self, msg, args):  # a command callable with !tryme
@@ -66,12 +66,13 @@ class ChatterBot(BotPlugin):
             yield "[{}] cleared all memory".format(self._chatterbot.my_name)
 
     @arg_botcmd('corpus', type=str, nargs='*', default='chatterbot.corpus.english', help='list of corpus for training')
-    def train(self, msg, corpus=None):
+    def learn(self, msg, corpus=None):
         if self._chatterbot.is_learning:
+            yield "[{}] learning ...".format(self._chatterbot.my_name)
             self._chatterbot.train(corpus)
-            return "traing completed"
+            yield "[{}] Learning complete.".format(self._chatterbot.my_name)
         else:
-            return "Learning is disabled, please enable learning first"
+            return "[{}] Learning is disabled, please enable learning.".format(self._chatterbot.my_name)
 
     @botcmd
     def start(self, msg, args):
