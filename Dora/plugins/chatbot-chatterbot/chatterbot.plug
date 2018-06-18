@@ -1,0 +1,9 @@
+[Core]
+Name = ChatterBot
+Module = chatterbot
+
+[Documentation]
+Description = A chatbot implemented using ChatterBot
+
+[Python]
+Version = 2+
