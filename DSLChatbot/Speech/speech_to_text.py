@@ -6,9 +6,13 @@ import speech_recognition as sr
 
 # obtain audio from the microphone
 r = sr.Recognizer()
+# r.energy_threshold =
+# r.pause_threshold =
 with sr.Microphone() as source:
     print("Say something!")
-    audio = r.listen(source)
+    audio = r.listen(source, timeout=5, phrase_time_limit=10)
+
+r.adjust_for_ambient_noise(audio)
 
 # recognize speech using Sphinx
 try:
