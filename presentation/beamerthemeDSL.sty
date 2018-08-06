@@ -1,0 +1,36 @@
+% this style is created by Yingzhi Gou based on beamer them Boadilla, and Pittsburgh
+% version 0.1
+
+\mode<presentation>
+
+% Requirement
+\RequirePackage{tikz}
+
+
+\newif\ifbeamer@secheader
+\beamer@secheaderfalse
+
+\DeclareOptionBeamer{secheader}{\beamer@secheadertrue}
+\ProcessOptionsBeamer
+
+\usecolortheme{rose}
+\useinnertheme{circles}
+\usecolortheme{dolphin}
+\useoutertheme{infolines}
+
+\setbeamercolor{block title example}{use=example text,fg=white,bg=example text.fg!75!black}
+\setbeamercolor{block body example}{parent=normal text,use=block title example,bg=block title example.bg!10!bg}
+
+% Tills' opinion: should be done in an inner theme, not here.
+
+\usesubitemizeitemtemplate{%
+    \tiny\raise1.5pt\hbox{\color{beamerstructure}$\blacktriangleright$}%
+}
+\usesubsubitemizeitemtemplate{%
+    \tiny\raise1.5pt\hbox{\color{beamerstructure}$\bigstar$}%
+}
+
+\setbeamersize{text margin left=2em,text margin right=2em}
+
+\ifbeamer@secheader\else\setbeamertemplate{headline}[default]\fi
+\mode<all>
