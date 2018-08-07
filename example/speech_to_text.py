@@ -6,6 +6,8 @@ import os
 import speech_recognition as sr
 
 # obtain audio from the microphone
+from DSLChatbot import DSL_ROOT
+
 r = sr.Recognizer()
 # r.energy_threshold =
 # r.pause_threshold =
@@ -37,7 +39,7 @@ except sr.RequestError as e:
 
 # recognize speech using Google Cloud Speech
 # GOOGLE_CLOUD_SPEECH_CREDENTIALS = r"""INSERT THE CONTENTS OF THE GOOGLE CLOUD SPEECH JSON CREDENTIALS FILE HERE"""
-with open(os.path.join(os.path.dirname(__file__), "api_key_google_cloud_speech.json"), 'r') as api_key:
+with open(os.path.join(DSL_ROOT, "Speech/api_key_google_cloud_speech.json"), 'r') as api_key:
     GOOGLE_CLOUD_SPEECH_CREDENTIALS = api_key.read()
     # if __debug__:
     #     print(GOOGLE_CLOUD_SPEECH_CREDENTIALS)
