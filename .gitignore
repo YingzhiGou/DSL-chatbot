@@ -106,3 +106,4 @@ venv.bak/
 /keyrings/live/pubring.kbx~
 /keyrings/live/secring.gpg
 /foo.txt
+/DSLChatbot/Speech/api_key_google_cloud_speech.json
