@@ -1,6 +1,7 @@
 [Core]
 Name = Speech2Text
 Module = speech2text
+DependsOn = ChatterBot
 
 [Documentation]
 Description = plugin that convert the audio to text

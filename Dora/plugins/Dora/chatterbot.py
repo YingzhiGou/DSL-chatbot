@@ -15,7 +15,8 @@ class ChatterBot(BotPlugin):
         :return:
         """
         super(ChatterBot, self).activate()
-        self._chatterbot = DSLChatterBot(storage=self.bot_config.BOT_DATA_DIR, name='Dora', read_only=True)
+        self._chatterbot = DSLChatterBot(storage=self.bot_config.BOT_DATA_DIR, name='Dora', read_only=True,
+                                         language_filter=False)
 
     @botcmd  # flags a command
     def test_chatterbot(self, msg, args):  # a command callable with !tryme

@@ -16,9 +16,21 @@ def audio_from_microphone(recognizer=_recognizer, timeout=5, phrase_time_limit=1
         _logger.info("Listening on microphone")
         if adjust_for_ambient_noise:
             # listen for 1 second to calibrate the energy threshold for ambient noise levels
-            recognizer.adjust_for_ambient_noise(source)
+            recognizer.adjust_for_ambient_noise(source, duration=1)
         audio = recognizer.listen(source, timeout=timeout, phrase_time_limit=phrase_time_limit)
     return audio
+
+
+def listen_in_background(recognizer=_recognizer, phrase_time_limit=15, adjust_for_ambient_noise=True, callback=None):
+    _logger.info("Starting background listening")
+    mic = sr.Microphone()
+    if adjust_for_ambient_noise:
+        _logger.info("Adjusting for ambient noise ...")
+        with mic as source:
+            recognizer.adjust_for_ambient_noise(source, duration=3)
+    return recognizer.listen_in_background(mic,
+                                           callback if callback is not None else audio_to_text_google_speech,
+                                           phrase_time_limit=phrase_time_limit)
 
 
 def audio_to_text_sphinx(audio, recognizer=_recognizer, language="en-US", keyword_entries=None, grammar=None,
@@ -46,6 +58,7 @@ def audio_to_text_google_speech(audio, recognizer=_recognizer, key=None, languag
         _logger.warning("Google Speech Recognition could not understand audio")
     except sr.RequestError as e:
         _logger.warning("Could not request results from Google Speech Recognition service; {0}".format(e))
+    return text
 
 
 def audio_to_text_google_cloud_speech(audio, recognizer=_recognizer, language="en-US", preferred_phrases=None,
