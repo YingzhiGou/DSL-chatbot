@@ -1,0 +1,9 @@
+[Core]
+Name = Speech2Text
+Module = speech2text
+
+[Documentation]
+Description = plugin that convert the audio to text
+
+[Python]
+Version = 2+

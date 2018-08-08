@@ -5,9 +5,7 @@ from DSLChatbot.learning import ChatterBot as DSLChatterBot
 
 class ChatterBot(BotPlugin):
     """
-    This is a very basic plugin to try out your new installation and get you started.
-    Feel free to tweak me to experiment with Errbot.
-    You can find me in your init directory in the subdirectory plugins.
+    Chatterbot chatbot
     """
     autostarted = False
 

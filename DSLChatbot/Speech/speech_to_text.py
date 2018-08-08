@@ -36,7 +36,7 @@ def audio_to_text_sphinx(audio, recognizer=_recognizer, language="en-US", keywor
     return text
 
 
-def audio_to_text_(audio, recognizer=_recognizer, key=None, language="en-US", show_all=False):
+def audio_to_text_google_speech(audio, recognizer=_recognizer, key=None, language="en-US", show_all=False):
     text = None
     try:
         # for testing purposes, we're just using the default API key

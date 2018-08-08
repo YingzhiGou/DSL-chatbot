@@ -2,15 +2,17 @@ import os
 import random
 
 import tensorflow as tf
+from chatbot.chatbot import Chatbot
+from chatbot.model import Model
+from chatbot.textdata import TextData
+from deprecated import deprecated
 from tensorflow.python import debug as tf_debug
 
 from DSLChatbot import DEEPQA_PATH
 from DSLChatbot.learning.bot import LearningChatBot
-from chatbot.chatbot import Chatbot
-from chatbot.model import Model
-from chatbot.textdata import TextData
 
 
+@deprecated("DeepQA bot is nolonger under activate development")
 class DeepQABot(LearningChatBot):
     def __init__(self, name="DeepQA", language_filter=True):
         super(DeepQABot, self).__init__(name, language_filter=language_filter)
