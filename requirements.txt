@@ -8,3 +8,4 @@ chatterbot
 SpeechRecognition
 PyAudio
 pocketsphinx
+deprecated

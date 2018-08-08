@@ -33,12 +33,11 @@ def listen_in_background(recognizer=_recognizer, phrase_time_limit=15, adjust_fo
                                            phrase_time_limit=phrase_time_limit)
 
 
-def audio_to_text_sphinx(audio, recognizer=_recognizer, language="en-US", keyword_entries=None, grammar=None,
-                         show_all=False):
+def audio_to_text_sphinx(audio, recognizer=_recognizer, language="en-US", keyword_entries=None, show_all=False):
     # recognize speech using Sphinx
     text = None
     try:
-        text = recognizer.recognize_sphinx(audio, language=language, keyword_entries=keyword_entries, grammar=grammar,
+        text = recognizer.recognize_sphinx(audio, language=language, keyword_entries=keyword_entries,
                                            show_all=show_all)
         _logger.info("Sphinx thinks you said: {}".format(text))
     except sr.UnknownValueError:
