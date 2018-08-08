@@ -1,11 +1,12 @@
+import threading
 from enum import Enum
 from functools import partial
-from time import sleep
 
 from errbot import BotPlugin, botcmd, arg_botcmd
+from speech_recognition import WaitTimeoutError
 
 from DSLChatbot.Speech.speech_to_text import audio_from_microphone, audio_to_text_sphinx, audio_to_text_google_speech, \
-    audio_to_text_google_cloud_speech, listen_in_background
+    audio_to_text_google_cloud_speech
 
 
 class Speech2Text(BotPlugin):
@@ -15,8 +16,9 @@ class Speech2Text(BotPlugin):
             super().activate()
             self.__speech_engine = Speech2Text.SPEECH2TEXT_ENGINES.Sphinx  # default engine
             self.__speech_engine_kwargs = {}
-            self.__stop_listening = None
+            self.__listening_thread = None
             self.__speaking = False
+            self.__listening = False
         else:
             self.log.error("Speech2Text only supports text and graphic mode.")
 
@@ -30,14 +32,19 @@ class Speech2Text(BotPlugin):
 
     @botcmd
     def test_speech2text(self, msg, args):
-        self.send(msg.frm, "Start listening on microphone ...", msg)
-        audio = audio_from_microphone()
-        self.send(msg.frm, "Processing audio ...", msg)
-        text = self._audio_to_speech(audio)
-        if text is not None:
-            self.send(msg.frm, "You said: {}".format(text), msg)
+        if not self.__listening:
+            self.__listening = True
+            self.send(msg.frm, "Start listening on microphone ...", msg)
+            self.__listening = False
+            audio = audio_from_microphone()
+            self.send(msg.frm, "Processing audio ...", msg)
+            text = self._audio_to_speech(audio)
+            if text is not None:
+                self.send(msg.frm, "You said: {}".format(text), msg)
+            else:
+                self.send(msg.frm, "Failed to recognize any words.", msg)
         else:
-            self.send(msg.frm, "Failed to recognize any words.", msg)
+            self.send(msg.frm, "already listening", msg)
 
     @arg_botcmd('option', type=str, default=['current', 'Sphinx', 'GoogleSpeech', 'GoogleCloudSpeech'],
                 help='set or display the current speech recognition engine.')
@@ -55,36 +62,46 @@ class Speech2Text(BotPlugin):
 
     @botcmd
     def start_listening(self, msg, args):
-        if self.__stop_listening is not None:
+        if self.__listening_thread is not None or self.__listening:
             return "Already listening"
         chatterbot = self.get_plugin("ChatterBot")._chatterbot
 
         # this is called from the background thread
-        def callback(recognizer, audio):
-            self.log.info("Recognizing audio ...")
-            # received audio data, now we'll recognize it
-            text = self._audio_to_speech(audio)
-            if text:
-                print("[MIC]: {}".format(text))
-                reply = chatterbot.reply(text, "MIC")
-                print("[{}]: {}".format(chatterbot.my_name, reply))
-                if self.__speaking:
-                    raise NotImplemented  # todo speek!
-            elif __debug__:
-                print("[MIC]: ** Cannot recognize audio. **")
-            self.log.info("Cannot recognize audio.")
+        def threaded_listen():
+            while self.__listening:
+                self.log.info("Listening ...")
+                try:
+                    audio = audio_from_microphone()
+                except WaitTimeoutError:  # listening timed out, just try again
+                    pass
+                else:
+                    self.log.info("Recognizing audio ...")
+                    # received audio data, now we'll recognize it
+                    text = self._audio_to_speech(audio)
+                    if text:
+                        print("[MIC]: {}".format(text))
+                        reply = chatterbot.reply(text, "MIC")
+                        print("[{}]: {}".format(chatterbot.my_name, reply))
+                        if self.__speaking:
+                            raise NotImplemented  # todo speek!
+                    elif __debug__:
+                        print("[MIC]: ** Cannot recognize audio. **")
+                    self.log.info("Cannot recognize audio.")
 
-        self.__stop_listening = listen_in_background(callback=callback)
+        self.log.info("Starting listening thread ...")
+        self.__listening = True
+        self.__listening_thread = threading.Thread(target=threaded_listen)
+        self.__listening_thread.start()
         self.log.info("Listening in the background.")
         return "Start listening in background"
 
     @botcmd
     def stop_listening(self, msg, args):
-        if self.__stop_listening is not None:
+        if self.__listening_thread is not None:
             yield "Stopping ..."
-            self.__stop_listening(wait_for_stop=False)
-            sleep(3)
-            self.__stop_listening = None
+            self.__listening = False
+            self.__listening_thread.join()
+            self.__listening_thread = None
             return "no longer listening."
         else:
             return "not listening"

@@ -9,10 +9,12 @@ with open(os.path.join(os.path.dirname(__file__), 'api_key_google_cloud_speech.j
 
 _logger = logging.getLogger(__name__)
 _recognizer = sr.Recognizer()
+_microphone = sr.Microphone()
 
 
-def audio_from_microphone(recognizer=_recognizer, timeout=5, phrase_time_limit=15, adjust_for_ambient_noise=True):
-    with sr.Microphone() as source:
+def audio_from_microphone(microphone=_microphone, recognizer=_recognizer, timeout=5, phrase_time_limit=15,
+                          adjust_for_ambient_noise=True):
+    with microphone as source:
         _logger.info("Listening on microphone")
         if adjust_for_ambient_noise:
             # listen for 1 second to calibrate the energy threshold for ambient noise levels
@@ -21,9 +23,10 @@ def audio_from_microphone(recognizer=_recognizer, timeout=5, phrase_time_limit=1
     return audio
 
 
-def listen_in_background(recognizer=_recognizer, phrase_time_limit=15, adjust_for_ambient_noise=True, callback=None):
+def listen_in_background(microphone=_microphone, recognizer=_recognizer, phrase_time_limit=15,
+                         adjust_for_ambient_noise=True, callback=None):
     _logger.info("Starting background listening")
-    mic = sr.Microphone()
+    mic = microphone
     if adjust_for_ambient_noise:
         _logger.info("Adjusting for ambient noise ...")
         with mic as source:
