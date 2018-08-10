@@ -78,9 +78,13 @@ class Speech2Text(BotPlugin):
         if option == 'current':
             reply = "Current Speech Recognition Engine: {}".format(self.__speech_engine.name)
         else:
-            reply = "Switched Speech recognition Engine from \"{}\" to ".format(self.__speech_engine.name)
-            self.__speech_engine = self.SPEECH2TEXT_ENGINES[option]
-            reply += "\"{}\"".format(self.__speech_engine.name)
+            reply = self._set_stt(option)
+        return reply
+
+    def _set_stt(self, option):
+        reply = "Switched Speech recognition Engine from \"{}\" to ".format(self.__speech_engine.name)
+        self.__speech_engine = self.SPEECH2TEXT_ENGINES[option]
+        reply += "\"{}\"".format(self.__speech_engine.name)
         return reply
 
     @arg_botcmd('option', admin_only=True, type=str, default=['current', 'eSpeak', 'gTTS'],
@@ -95,10 +99,14 @@ class Speech2Text(BotPlugin):
         if option == 'current':
             reply = "Current Text-to-Speech Engine: {}".format(self.__text_engine.name)
         else:
-            reply = "Switched Text-to-Speech Engine from \"{}\" to ".format(self.__text_engine.name)
-            self.__text_engine = self.TEXT2SPEECH_ENGINES[option]
-            self.__text_engine_instance = self.__text_engine()
-            reply += "\"{}\"".format(self.__text_engine.name)
+            reply = self._set_tts(option)
+        return reply
+
+    def _set_tts(self, option):
+        reply = "Switched Text-to-Speech Engine from \"{}\" to ".format(self.__text_engine.name)
+        self.__text_engine = self.TEXT2SPEECH_ENGINES[option]
+        self.__text_engine_instance = self.__text_engine()
+        reply += "\"{}\"".format(self.__text_engine.name)
         return reply
 
     def _audio_to_speech(self, audio):
@@ -110,8 +118,10 @@ class Speech2Text(BotPlugin):
         use only engines for STT and TTS
         :return:
         """
-        self.set_stt(None, 'Sphinx')
-        self.set_tts(None, 'eSpeak')
+        replys = []
+        replys.append(self._set_stt('GoogleCloudSpeech'))
+        replys.append(self._set_tts('gTTS'))
+        return "\n".join(replys)
 
     @botcmd(admin_only=True)
     def set_offline(self, msg, args):
@@ -119,8 +129,10 @@ class Speech2Text(BotPlugin):
         use preferred online STT and TTS engines
         :return:
         """
-        self.set_stt(None, 'GoogleCloudSpeech')
-        self.set_tts(None, 'gTTS')
+        replys = []
+        replys.append(self._set_stt('Sphinx'))
+        replys.append(self._set_tts('eSpeak'))
+        return "\n".join(replys)
 
     @botcmd(admin_only=True)
     def start_listening(self, msg, args):
