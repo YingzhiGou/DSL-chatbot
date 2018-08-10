@@ -3,8 +3,14 @@ from abc import ABCMeta, abstractmethod
 
 
 class Text2Speech(object, metaclass=ABCMeta):
+    _instance = None
+
     def __init__(self):
         self._logger = logging.getLogger(self.__class__.__name__)
+        if Text2Speech._instance is not None:
+            # terminate the old enstance so the new one can be create
+            Text2Speech._instance.terminate()
+        Text2Speech._instance = self
 
     @abstractmethod
     def speak(self, text):
@@ -47,21 +53,29 @@ class Text2Speech_gTTS(Text2Speech):
 
     def terminate(self):
         self.player.terminate()
-        del self.player
 
 
 class Text2Speech_eSpeak(Text2Speech):
-    def terminate(self):
-        pass
-
-    def speak(self, text):
-        pass
-
     def __init__(self):
         super(Text2Speech_eSpeak, self).__init__()
+        import subprocess
+        self.espeak_process = subprocess.Popen(["espeak", "-m", "--stdin", "-ven+f1"], stdin=subprocess.PIPE)
+
+    def speak(self, text: str):
+        self.espeak_process.communicate(text.encode())
+        # if not text.endswith('\n'):
+        #     self.espeak_process.communicate("\n")
+
+    def terminate(self):
+        self.espeak_process.terminate()
+        self.espeak_process = None
 
 
 if __name__ == "__main__":
     tts = Text2Speech_gTTS()
+    tts.speak("The quick brown fox jumps over the lazy dog.")
+    tts.terminate()
+
+    tts = Text2Speech_eSpeak()
     tts.speak("The quick brown fox jumps over the lazy dog.")
     tts.terminate()

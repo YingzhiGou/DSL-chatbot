@@ -11,7 +11,6 @@ from DSLChatbot.Speech.text_to_speech import Text2Speech_eSpeak, Text2Speech_gTT
 
 
 class Speech2Text(BotPlugin):
-
     def activate(self):
         if self._bot.mode in ['text', 'graphic']:
             super().activate()
@@ -24,6 +23,11 @@ class Speech2Text(BotPlugin):
             self.__listening = False
         else:
             self.log.error("Speech2Text only supports text and graphic mode.")
+
+    def deactivate(self):
+        self.stop_listening(None, None)
+        self.__text_engine_instance.terminate()
+        super().deactivate()
 
     class SPEECH2TEXT_ENGINES(Enum):
         Sphinx = partial(audio_to_text_sphinx)
