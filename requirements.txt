@@ -9,3 +9,4 @@ SpeechRecognition
 PyAudio
 pocketsphinx
 deprecated
+gTTS
