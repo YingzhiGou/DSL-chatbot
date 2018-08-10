@@ -7,6 +7,7 @@ from speech_recognition import WaitTimeoutError
 
 from DSLChatbot.Speech.speech_to_text import audio_from_microphone, audio_to_text_sphinx, audio_to_text_google_speech, \
     audio_to_text_google_cloud_speech
+from DSLChatbot.Speech.text_to_speech import Text2Speech_eSpeak, Text2Speech_gTTS
 
 
 class Speech2Text(BotPlugin):
@@ -16,8 +17,10 @@ class Speech2Text(BotPlugin):
             super().activate()
             self.__speech_engine = Speech2Text.SPEECH2TEXT_ENGINES.Sphinx  # default engine
             self.__speech_engine_kwargs = {}
+            self.__text_engine = Speech2Text.TEXT2SPEECH_ENGINES.eSpeak
+            self.__text_engine_instance = self.__text_engine()
             self.__listening_thread = None
-            self.__speaking = False
+            self.__speaking = True
             self.__listening = False
         else:
             self.log.error("Speech2Text only supports text and graphic mode.")
@@ -30,13 +33,26 @@ class Speech2Text(BotPlugin):
         def __call__(self, *args, **kwargs):
             return self.value(*args, **kwargs)
 
-    @botcmd
-    def test_speech2text(self, msg, args):
+    class TEXT2SPEECH_ENGINES(Enum):
+        eSpeak = Text2Speech_eSpeak
+        gTTS = Text2Speech_gTTS
+
+        def __call__(self, *args, **kwargs):
+            return self.value()
+
+    @botcmd(admin_only=True)
+    def test_stt(self, msg, args):
+        """
+        test STT using selected STT engine
+        :param msg:
+        :param args:
+        :return:
+        """
         if not self.__listening:
             self.__listening = True
             self.send(msg.frm, "Start listening on microphone ...", msg)
-            self.__listening = False
             audio = audio_from_microphone()
+            self.__listening = False
             self.send(msg.frm, "Processing audio ...", msg)
             text = self._audio_to_speech(audio)
             if text is not None:
@@ -46,9 +62,15 @@ class Speech2Text(BotPlugin):
         else:
             self.send(msg.frm, "already listening", msg)
 
-    @arg_botcmd('option', type=str, default=['current', 'Sphinx', 'GoogleSpeech', 'GoogleCloudSpeech'],
+    @arg_botcmd('option', admin_only=True, type=str, default=['current', 'Sphinx', 'GoogleSpeech', 'GoogleCloudSpeech'],
                 help='set or display the current speech recognition engine.')
-    def engine(self, msg, option):
+    def set_stt(self, msg, option):
+        """
+        set or display the current speech recognition engine.
+        :param msg:
+        :param option:
+        :return:
+        """
         if option == 'current':
             reply = "Current Speech Recognition Engine: {}".format(self.__speech_engine.name)
         else:
@@ -57,10 +79,46 @@ class Speech2Text(BotPlugin):
             reply += "\"{}\"".format(self.__speech_engine.name)
         return reply
 
+    @arg_botcmd('option', admin_only=True, type=str, default=['current', 'eSpeak', 'gTTS'],
+                help="set or display the current text-to-speech engine")
+    def set_tts(self, msg, option):
+        """
+        set or display the current text-to-speech engine
+        :param msg:
+        :param option:
+        :return:
+        """
+        if option == 'current':
+            reply = "Current Text-to-Speech Engine: {}".format(self.__text_engine.name)
+        else:
+            reply = "Switched Text-to-Speech Engine from \"{}\" to ".format(self.__text_engine.name)
+            self.__text_engine = self.TEXT2SPEECH_ENGINES[option]
+            self.__text_engine_instance = self.__text_engine()
+            reply += "\"{}\"".format(self.__text_engine.name)
+        return reply
+
     def _audio_to_speech(self, audio):
         return self.__speech_engine(audio, **self.__speech_engine_kwargs)
 
-    @botcmd
+    @botcmd(admin_only=True)
+    def set_online(self, msg, args):
+        """
+        use only engines for STT and TTS
+        :return:
+        """
+        self.set_stt(None, 'Sphinx')
+        self.set_tts(None, 'eSpeak')
+
+    @botcmd(admin_only=True)
+    def set_offline(self, msg, args):
+        """
+        use preferred online STT and TTS engines
+        :return:
+        """
+        self.set_stt(None, 'GoogleCloudSpeech')
+        self.set_tts(None, 'gTTS')
+
+    @botcmd(admin_only=True)
     def start_listening(self, msg, args):
         if self.__listening_thread is not None or self.__listening:
             return "Already listening"
@@ -70,6 +128,7 @@ class Speech2Text(BotPlugin):
         def threaded_listen():
             while self.__listening:
                 self.log.info("Listening ...")
+                self.send(msg.frm, "**[listening...]**")
                 try:
                     audio = audio_from_microphone()
                 except WaitTimeoutError:  # listening timed out, just try again
@@ -79,13 +138,13 @@ class Speech2Text(BotPlugin):
                     # received audio data, now we'll recognize it
                     text = self._audio_to_speech(audio)
                     if text:
-                        print("[MIC]: {}".format(text))
+                        self.send(msg.frm, "[MIC]: {}".format(text))
                         reply = chatterbot.reply(text, "MIC")
-                        print("[{}]: {}".format(chatterbot.my_name, reply))
+                        self.send(msg.frm, "[{}]: {}".format(chatterbot.my_name, reply))
                         if self.__speaking:
-                            raise NotImplemented  # todo speek!
+                            self.__text_engine_instance.speak(reply)
                     elif __debug__:
-                        print("[MIC]: ** Cannot recognize audio. **")
+                        self.send(msg.frm, "[MIC]: ~~Cannot recognize audio~~")
                     self.log.info("Cannot recognize audio.")
 
         self.log.info("Starting listening thread ...")
@@ -93,9 +152,9 @@ class Speech2Text(BotPlugin):
         self.__listening_thread = threading.Thread(target=threaded_listen)
         self.__listening_thread.start()
         self.log.info("Listening in the background.")
-        return "Start listening in background"
+        # return "Start listening in background"
 
-    @botcmd
+    @botcmd(admin_only=True)
     def stop_listening(self, msg, args):
         if self.__listening_thread is not None:
             yield "Stopping ..."

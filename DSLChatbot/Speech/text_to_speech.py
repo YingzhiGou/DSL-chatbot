@@ -50,6 +50,17 @@ class Text2Speech_gTTS(Text2Speech):
         del self.player
 
 
+class Text2Speech_eSpeak(Text2Speech):
+    def terminate(self):
+        pass
+
+    def speak(self, text):
+        pass
+
+    def __init__(self):
+        super(Text2Speech_eSpeak, self).__init__()
+
+
 if __name__ == "__main__":
     tts = Text2Speech_gTTS()
     tts.speak("The quick brown fox jumps over the lazy dog.")
