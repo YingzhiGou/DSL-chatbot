@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+/keyrings/live/pubring.gpg~
+/keyrings/live/pubring.kbx~
+/keyrings/live/secring.gpg
+/DSLChatbot/Speech/api_key_google_cloud_speech.json

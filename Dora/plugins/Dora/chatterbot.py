@@ -5,9 +5,7 @@ from DSLChatbot.learning import ChatterBot as DSLChatterBot
 
 class ChatterBot(BotPlugin):
     """
-    This is a very basic plugin to try out your new installation and get you started.
-    Feel free to tweak me to experiment with Errbot.
-    You can find me in your init directory in the subdirectory plugins.
+    Chatterbot chatbot
     """
     autostarted = False
 
@@ -17,7 +15,8 @@ class ChatterBot(BotPlugin):
         :return:
         """
         super(ChatterBot, self).activate()
-        self._chatterbot = DSLChatterBot(storage=self.bot_config.BOT_DATA_DIR, name='Dora', read_only=True)
+        self._chatterbot = DSLChatterBot(storage=self.bot_config.BOT_DATA_DIR, name='Dora', read_only=True,
+                                         language_filter=False)
 
     @botcmd  # flags a command
     def test_chatterbot(self, msg, args):  # a command callable with !tryme

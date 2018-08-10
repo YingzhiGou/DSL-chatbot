@@ -5,3 +5,7 @@ tqdm
 nltk
 python-telegram-bot
 chatterbot
+SpeechRecognition
+PyAudio
+pocketsphinx
+deprecated
